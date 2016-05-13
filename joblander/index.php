@@ -12,12 +12,13 @@
   <body>
 
   <?php
+
   // define variables and set to empty values
   $companyNameErr = $contactNameErr = $contactEmailErr = "";
-  $companyName = $contactName = $knownAssociates = $notes = $linkdein = $contactEmail = $contactNumber = $companyWebsite = "";
+  $companyName = $contactName = $contactEmail = $contactNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = "";
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+    //company name && err handler
       if (empty($_POST["companyName"])) {
         $companyNameErr = "Company name is required";
       } else {
@@ -27,8 +28,8 @@
           $companyNameErr = "Only letters and white space allowed";
         }
       }
-
-    if (empty($_POST["companyName"])) {
+      //contact name && err handler
+    if (empty($_POST["contactName"])) {
       $contactNameErr = "Contact name is required";
     } else {
       $contactName = test_input($_POST["contactName"]);
@@ -37,7 +38,7 @@
         $contactNameErr = "Only letters and white space allowed";
       }
     }
-
+    //contact email && err handler
     if (empty($_POST["contactEmail"])) {
       $contactEmailErr = "Contact's Email is required";
     } else {
@@ -47,35 +48,67 @@
         $contactEmailErr = "Invalid email format";
       }
     }
-
-    if (empty($_POST["knownAssociates"])) {
-      $knownAssociates = "";
+    //contacts phone number
+    if (empty($_POST["contactNumber"])) {
+      $contactNumber = "";
     } else {
-      $knownAssociates = test_input($_POST["knownAssociates"]);
+      $contactNumber = test_input($_POST["contactNumber"]);
     }
-
+    //notes to fill out about company, contact, tech used...etc
     if (empty($_POST["notes"])) {
       $notes = "";
     } else {
       $notes = test_input($_POST["notes"]);
     }
-
-    if (empty($_POST["website"])) {
-      $website = "";
+    //job description
+    if (empty($_POST["jobDescription"])) {
+      $jobDescription = "";
     } else {
-      $website = test_input($_POST["website"]);
+      $jobDescription = test_input($POST_["jobDescription"]);
+    }
+    //website url for quick look up
+    if (empty($_POST["website"])) {
+      $companyWebsite = "";
+    } else {
+      $companyWebsite = test_input($_POST["companyWebsite"]);
       // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-      if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
-        $websiteErr = "Invalid URL";
+      if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$companyWebsite)) {
+        $companyWebsiteErr = "Invalid URL";
       }
     }
-
+    //known associates at company
+    if (empty($_POST["knownAssociates"])) {
+      $knownAssociates = "";
+    } else {
+      $knownAssociates = test_input($_POST["knownAssociates"]);
+    }
+    //response, Yes or No. have they gotten back to you?
     if (empty($_POST["response"])) {
       $responseErr = "Response is required";
     } else {
       $response = test_input($_POST["response"]);
     }
+    //thank you email. Did you send one after you chatted with them?
+    if (empty($_POST["thankYouEmail"])) {
+      $responseErr = "Response is required";
+    } else {
+      $response = test_input($_POST["response"]);
+    }
+    //rejection to your application Yes/No
+    if (empty($_POST["rejection"])) {
+      $rejectionErr = "Response is required";
+    } else {
+      $rejection = test_input($_POST["rejection"]);
+    }
+    //did the user send a rejection email asking for feedback Yes/No
+    if (empty($_POST["rejectionEmail"])) {
+      $rejectionEmailErr = "Response is required";
+    } else {
+      $rejectionEmail = test_input($_POST["rejectionEmail"]);
+    }
   }
+
+
 
   function test_input($data) {
     $data = trim($data);
@@ -85,33 +118,68 @@
   }
   ?>
 
+
+
   <h2>Joblander Contact Card</h2>
-    <p><span class="error">* required field.</span></p>
-      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+
+  <!-- date at top of card. Hope to say this for users records on when card was created -->
+  <?php echo "Card created on " . date("D m, Y") . "<br>";?><br>
+
+  <p><span class="error">* required field.</span></p>
+
+<!-- <form method="post" action="thefileIwant.php"> -->
+
+      <!-- <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> -->
+      <form method="post" action="mysqlqueries.php">
         Company Name: <input type="text" name="companyName" value="<?php echo $companyName;?>">
         <span class="error">* <?php echo $companyNameErr;?></span>
         <br><br>
         Contact Name: <input type="text" name="contactName" value="<?php echo $contactName;?>">
         <span class="error">* <?php echo $contactNameErr;?></span>
+<!--
+        <button id="myBtn">Try it</button>
+        <p id="demo"></p>
+        <script>
+        document.getElementById("myBtn").addEventListener("click", displayDate);
+
+        function displayDate() {
+            document.getElementById("demo").innerHTML = Date();
+        }
+        </script> -->
+
         <br><br>
+
+
         Contact's E-mail: <input type="text" name="email" value="<?php echo $contactEmail;?>">
         <span class="error">* <?php echo $contactEmailErr;?></span>
         <br><br>
-        Known Associates:
-        <br><br>
-        <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
+        Contact's Phone Number: <input type="text" name="pNumber" value="<?php echo $contactNumber;?>">
         <br><br>
         Notes:
         <br><br>
         <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
         <br><br>
+        Job Description:
+        <br><br>
+        <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
+        <br><br>
         Website: <input type="text" name="companyWebsite" value="<?php echo $companyWebsite;?>">
+        <br><br>
+        Know Associates: <input type="text" name="knownAssociates" value="<?php echo $knownAssociates;?>">
         <br><br>
         Response:
         <input type="radio" name="response" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="response" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
         <br><br>
         Thank you Email:
+        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
+        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
+        <br><br>
+        Rejection:
+        <input type="radio" name="Rejection" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
+        <input type="radio" name="Rejection" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
+        <br><br>
+        Rejection Email:
         <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
         <br><br>
