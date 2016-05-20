@@ -2,20 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <script src="jquery.min.js"></script>
     <title></title>
-    <?php
-      $welcome = "Hello World";
-    ?>
+      <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet'>
+      <link href='https://fonts.googleapis.com/css?family=Arimo|Shadows+Into+Light' rel='stylesheet'>
+      <link rel='stylesheet' href='css/main.css'>
+      <meta name='viewport' content='width=device-width, inital-scale=1.0'>
+
   </head>
 
 
   <body>
+    <div class="list">
+      <h1 class='header'>To do.</h1>
+
+      <ul class="items">
+        <li>
+          <span class='item'>Apply to 15-30 jobs this week</span>
+          <a href="#" class="done-button">Mark as done</a>
+        </li>
+        <li>
+          <span class='item done'>Learn Php</span>
+        </li>
+      </ul>
+
+        <form class="item-add" action="add.php" method="post">
+          <input type="text" name="name" placeholder="Add a to-do here" class="input" autocomplete="off" required>
+          <input type="submit" value="Add" class="submit">
+        </form>
+
+
+
+    </div>
 
   <?php
 
   // define variables and set to empty values
   $companyNameErr = $contactNameErr = $contactEmailErr = "";
-  $companyName = $contactName = $contactEmail = $contactNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = "";
+  $companyName = $contactName = $contactEmail = $contactNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = $LinkedIn = "";
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //company name && err handler
@@ -98,6 +122,7 @@
     if (empty($_POST["rejection"])) {
       $rejectionErr = "Response is required";
     } else {
+      //$rejection - is the variable that contains the users input
       $rejection = test_input($_POST["rejection"]);
     }
     //did the user send a rejection email asking for feedback Yes/No
@@ -108,8 +133,6 @@
     }
   }
 
-
-
   function test_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -118,50 +141,33 @@
   }
   ?>
 
-
-
   <h2>Joblander Contact Card</h2>
 
-  <!-- date at top of card. Hope to say this for users records on when card was created -->
   <?php echo "Card created on " . date("D m, Y") . "<br>";?><br>
-
   <p><span class="error">* required field.</span></p>
 
-<!-- <form method="post" action="thefileIwant.php"> -->
-
-      <!-- <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> -->
       <form method="post" action="mysqlqueries.php">
         Company Name: <input type="text" name="companyName" value="<?php echo $companyName;?>">
         <span class="error">* <?php echo $companyNameErr;?></span>
         <br><br>
-        Contact Name: <input type="text" name="contactName" value="<?php echo $contactName;?>">
+        Contact Name:<input type="text" name="contactName" value="<?php echo $contactName;?>">
         <span class="error">* <?php echo $contactNameErr;?></span>
-<!--
-        <button id="myBtn">Try it</button>
-        <p id="demo"></p>
-        <script>
-        document.getElementById("myBtn").addEventListener("click", displayDate);
-
-        function displayDate() {
-            document.getElementById("demo").innerHTML = Date();
-        }
-        </script> -->
-
+        <button id=button type="button">Add Contact</button>
         <br><br>
-
-
         Contact's E-mail: <input type="text" name="email" value="<?php echo $contactEmail;?>">
         <span class="error">* <?php echo $contactEmailErr;?></span>
         <br><br>
         Contact's Phone Number: <input type="text" name="pNumber" value="<?php echo $contactNumber;?>">
         <br><br>
-        Notes:
+        Contact's LinkedIn: <input type="text" name="LinkedIn" value="<?php echo $LinkedIn;?>">
         <br><br>
-        <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
+        <!-- Notes:
         <br><br>
-        Job Description:
+        <textarea name="notes" rows="5" cols="40"></textarea>
+        <br><br> -->
+        <!-- Job Description:
         <br><br>
-        <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
+        <textarea name="jobDescription" rows="5" cols="40"></textarea> -->
         <br><br>
         Website: <input type="text" name="companyWebsite" value="<?php echo $companyWebsite;?>">
         <br><br>
@@ -185,9 +191,6 @@
         <br><br>
         <input type="submit" name="submit" value="Submit">
       </form>
-
-
-
 
   </body>
 </html>
