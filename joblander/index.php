@@ -1,3 +1,27 @@
+<?php
+
+require_once 'app/init.php';
+
+$itemsQuery = $db->prepare("
+  SELECT id, name, done
+  FROM items
+  WHERE user = :user
+");
+// the :user above is a placeholder to prevent SQL injection. We don't have to escape each one manually
+
+$itemsQuery->execute([
+  'user' => $_SESSION['user_id']
+]);
+// turnery opperator? Checking here to see if there is a sufficent row count on items or turn it into an empty array
+$items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
+
+//lets test this out by
+
+// foreach($items as $item) {
+//   print_r($item);
+// };
+ ?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,36 +34,39 @@
       <meta name='viewport' content='width=device-width, inital-scale=1.0'>
 
   </head>
-
-
   <body>
     <div class="list">
       <h1 class='header'>To do.</h1>
 
+      <?php if(!empty($items)): ?>
       <ul class="items">
-        <li>
-          <span class='item'>Apply to 15-30 jobs this week</span>
-          <a href="#" class="done-button">Mark as done</a>
-        </li>
-        <li>
-          <span class='item done'>Learn Php</span>
-        </li>
-      </ul>
+        <?php foreach($items as $item): ?>
+          <li>
+            <span class="item <?php echo $item['done'] ? ' done' : '' ?>"><?php echo $item['name']; ?></span>
+            <?php if($item['done']): ?>
+              <a href="#" class="done-button">Mark as done</a>
+          <?php endif; ?>
+          </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php else: ?>
+      <p>You haven't added any items yet.</p>
+    <?php endif; ?>
 
-        <form class="item-add" action="add.php" method="post">
-          <input type="text" name="name" placeholder="Add a to-do here" class="input" autocomplete="off" required>
+        <form class="item-add" action="mysqlqueries.php" method="post">
+          <input type="text" name="itemName" placeholder="Add a to-do here" class="input" autocomplete="off" required>
           <input type="submit" value="Add" class="submit">
         </form>
 
-
-
     </div>
 
-  <?php
+    <?php
 
   // define variables and set to empty values
   $companyNameErr = $contactNameErr = $contactEmailErr = "";
-  $companyName = $contactName = $contactEmail = $contactNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = $LinkedIn = "";
+  $companyName = $contactName = $contactEmail = $contactNumber = $associatesName = $associatesEmail = $associatesNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = $associatesLinkedIn = $contactLinkedIn = "";
+  //items
+  $itemName = "";
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //company name && err handler
@@ -55,8 +82,8 @@
       //contact name && err handler
     if (empty($_POST["contactName"])) {
       $contactNameErr = "Contact name is required";
-    } else {
-      $contactName = test_input($_POST["contactName"]);
+    // } else {
+    //   $contactName = test_input($_POST["contactName"]);
       // check if name only contains letters and whitespace
       if (!preg_match("/^[a-zA-Z ]*$/",$contactName)) {
         $contactNameErr = "Only letters and white space allowed";
@@ -147,50 +174,70 @@
   <p><span class="error">* required field.</span></p>
 
       <form method="post" action="mysqlqueries.php">
+
         Company Name: <input type="text" name="companyName" value="<?php echo $companyName;?>">
         <span class="error">* <?php echo $companyNameErr;?></span>
         <br><br>
-        Contact Name:<input type="text" name="contactName" value="<?php echo $contactName;?>">
+
+        Contact's info:
+        <br>
+        <input type="text" name="contactName" placeholder="Name">
         <span class="error">* <?php echo $contactNameErr;?></span>
         <button id=button type="button">Add Contact</button>
         <br><br>
-        Contact's E-mail: <input type="text" name="email" value="<?php echo $contactEmail;?>">
+        <input type="text" name="email" placeholder="Email" value="<?php echo $contactEmail;?>">
         <span class="error">* <?php echo $contactEmailErr;?></span>
         <br><br>
-        Contact's Phone Number: <input type="text" name="pNumber" value="<?php echo $contactNumber;?>">
+        <input type="text" name="pNumber" placeholder="(___)___-____" value="<?php echo $contactNumber;?>">
         <br><br>
-        Contact's LinkedIn: <input type="text" name="LinkedIn" value="<?php echo $LinkedIn;?>">
+        <input type="text" name="LinkedIn" placeholder="LinkedIn URL" value="<?php echo $contactLinkedIn;?>">
         <br><br>
-        <!-- Notes:
+
+
+        Notes:
         <br><br>
-        <textarea name="notes" rows="5" cols="40"></textarea>
-        <br><br> -->
-        <!-- Job Description:
+        <textarea name="notes" type="text" rows="5" cols="40"></textarea>
         <br><br>
-        <textarea name="jobDescription" rows="5" cols="40"></textarea> -->
+        Job Description:
+        <br><br>
+        <textarea name="jobDescription" type="text" rows="5" cols="40"></textarea>
         <br><br>
         Website: <input type="text" name="companyWebsite" value="<?php echo $companyWebsite;?>">
         <br><br>
-        Know Associates: <input type="text" name="knownAssociates" value="<?php echo $knownAssociates;?>">
+
+
+        Known Associates Info:
+        <br>
+        <input type="text" name="knownAssociates" placeholder="Name" value="<?php echo $knownAssociates;?>">
         <br><br>
+        <input type="text" name="associatesemail" placeholder="Email" value="<?php echo $associatesEmail;?>">
+        <br><br>
+        <input type="text" name="associatespNumber" placeholder="(___)___-____" value="<?php echo $associatesNumber;?>">
+        <br><br>
+        <input type="text" name="associatesLinkedIn" placeholder="LinkedIn URL" value="<?php echo $associatesLinkedIn;?>">
+        <br><br>
+
         Response:
         <input type="radio" name="response" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="response" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
         <br><br>
+
         Thank you Email:
-        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
-        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
+        <input type="radio" name="thankYouEmail" <?php if (isset($thankYouEmail) && $thankYouEmail=="Yes") echo "checked";?> value="Yes">Yes
+        <input type="radio" name="thankYouEmail" <?php if (isset($thankYouEmail) && $thankYouEmail=="No") echo "checked";?> value="No">No
         <br><br>
+
         Rejection:
-        <input type="radio" name="Rejection" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
-        <input type="radio" name="Rejection" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
+        <input type="radio" name="Rejection" <?php if (isset($rejection) && $rejection=="Yes") echo "checked";?> value="Yes">Yes
+        <input type="radio" name="Rejection" <?php if (isset($rejection) && $rejection=="No") echo "checked";?> value="No">No
         <br><br>
+
         Rejection Email:
-        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
-        <input type="radio" name="thankYouEmail" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
+        <input type="radio" name="rejectionEmail" <?php if (isset($rejectionEmail) && $rejectionEmail=="Yes") echo "checked";?> value="Yes">Yes
+        <input type="radio" name="rejectionEmail" <?php if (isset($rejectionEmail) && $rejectionEmail=="No") echo "checked";?> value="No">No
         <br><br>
         <input type="submit" name="submit" value="Submit">
       </form>
 
-  </body>
+</body>
 </html>
