@@ -15,7 +15,8 @@ a {
 /*List*/
 .list{
   background-color: white;
-  margin:20px auto;
+  float:left;
+  margin:20px;
   width:100%;
   max-width:500px;
   padding:20px;
@@ -25,6 +26,40 @@ a {
 }
 
 .list .header {
+  font-family: "shadows into light";
+  margin: 0 0 10px 0;
+}
+
+.list1{
+  background-color: white;
+  float:left;
+  margin:20px;
+  width:100%;
+  max-width:500px;
+  padding:20px;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+}
+
+.list1 .header {
+  font-family: "shadows into light";
+  margin: 0 0 10px 0;
+}
+
+.list2{
+  background-color: white;
+  float:left;
+  margin:20px;
+  width:100%;
+  max-width:500px;
+  padding:20px;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+}
+
+.list2 .header {
   font-family: "shadows into light";
   margin: 0 0 10px 0;
 }
@@ -81,4 +116,37 @@ a {
   width: 100%;
   margin-top: 10px;
   box-shadow: 3px 3px 0 #ddd
+}
+
+.joblanderContactCard {
+  /*display: inline-block;
+  clear:left;*/
+  background-color: white;
+  float:right;
+  margin:20px 20px 0 20px;
+  width:84%;
+  max-width:100%;
+  padding:20px;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+}
+
+.inputForContacts{
+  display: inline-block;
+  clear:left;
+  background-color: white;
+  float:left;
+  margin:20px 20px 0 20px;
+  width:11%;
+  max-width:100%;
+  padding:20px;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+
+}
+
+p.date{
+  text-align:right;
 }

@@ -19,6 +19,8 @@ if ($link) {
   $contactLinkedIn = $_POST['LinkedIn'];
   //company info
   $companyName = $_POST['companyName'];
+  $jobTitle = $_POST['jobTitle'];
+  $jobPosting = $_POST['jobPosting'];
   //form (jobland table)
   $notes = $_POST['notes'];
   $jobDescription = $_POST['jobDescription'];
@@ -32,35 +34,12 @@ if ($link) {
   $associatesEmail = $_POST['associatesemail'];
   $associatesNumber = $_POST['associatespNumber'];
   $associatesLinkedIn = $_POST['associatesLinkedIn'];
-  //items, for this one I'll be following along with the tutorial
-
-  require_once 'app/init.php';
-
-  if(isset($_POST['name'])) {
-    $name = trim($_POST['name']);
-
-      if(!empty($name)) {
-        $addQuery = $db->prepare("
-            INSERT INTO items (name, user, done, created)
-            VALUES (:name, :user, 0, NOW())
-        ");
-
-        $addQuery->execute([
-          'name' => $name,
-          'user' => $_SESSION['user_id']
-        ]);
-      }
-  }
-
-  header('Location: index.php');
-
-
 
   //contacts info
   $SQL = "INSERT INTO contacts (name, email, phone_number, LinkedIn) VALUES ('".$contactName."','".$contactEmail."','".$contactNumber."', '".$contactLinkedIn."');";
 
   //company info
-  $SQL1 = "INSERT INTO company (name) VALUES ('".$companyName."')";
+  $SQL1 = "INSERT INTO company (name, job_title, job_posting) VALUES ('".$companyName."', '".$jobTitle."', '".$jobPosting."')";
 
   //form (jobland table)                      // error on this SQL query
   $SQL2 = "INSERT INTO jobland (notes, description, website, response, thank_you_email, rejection, rejection_email) VALUES
@@ -68,11 +47,6 @@ if ($link) {
 
   //associates
   $SQL3 = "INSERT INTO associates (name, email, phone_number, LinkedIn) VALUES ('".$knownAssociates."','".$associatesEmail."', '".$associatesNumber."', '".$associatesLinkedIn."');";
-
-  // $SQL4 = "INSERT INTO items (name, user, done, created) VALUES (:name, :user, 0, NOW());";
-
-  //items
-  // $SQL4 = "INSERT INTO items (name, user, done, created) VALUES ('".."')"
 
   $result = mysqli_query($link, $SQL);
   $result = mysqli_query($link, $SQL1);
@@ -91,21 +65,3 @@ if ($link) {
 }
 
 ?>
-<div>
-  <?php
-      //echo $_POST['companyName'] . "<br>";//company
-      echo $_POST['contactName'] . "<br>";//contacts
-      echo $_POST['email'] . "<br>";//contacts
-      echo $_POST['pNumber'] . "<br>";//contacts
-      //echo $_POST['notes'] . "<br>";//jobland
-      //echo $_POST['jobDescription'] . "<br>";//jobland
-      //echo $_POST['companyWebsite'] . "<br>";//jobland
-      //echo $_POST['knownAssociates'] . "<br>";
-      // echo $_POST['response'] . "<br>";//jobland
-      // echo $_POST['thankYouEmail'] . "<br>";//jobland
-      // echo $_POST['Rejection'] . "<br>";//jobland
-      // echo $_POST['thankYouEmail'] . "<br>";//jobland
-      echo $_POST['LinkedIn'] . "<br>";//contacts
-  ?>
-</div>
-*/

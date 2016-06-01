@@ -1,5 +1,4 @@
 <?php
-
 require_once 'app/init.php';
 
 $itemsQuery = $db->prepare("
@@ -14,12 +13,6 @@ $itemsQuery->execute([
 ]);
 // turnery opperator? Checking here to see if there is a sufficent row count on items or turn it into an empty array
 $items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
-
-//lets test this out by
-
-// foreach($items as $item) {
-//   print_r($item);
-// };
  ?>
 
 <!DOCTYPE html>
@@ -32,20 +25,34 @@ $items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
       <link href='https://fonts.googleapis.com/css?family=Arimo|Shadows+Into+Light' rel='stylesheet'>
       <link rel='stylesheet' href='css/main.css'>
       <meta name='viewport' content='width=device-width, inital-scale=1.0'>
-
   </head>
   <body>
+<?php
+    //errors
+    $companyNameErr = $contactNameErr = $contactEmailErr = "";
+    //company
+    $companyName = $jobTitle = $jobPosting = "";
+    //contacts
+    $contactName = $contactEmail = $contactNumber = $contactLinkedIn = "";
+    //associates
+    $knownAssociates = $associatesName = $associatesEmail = $associatesNumber = $associatesLinkedIn = "";
+    //jobland(table)
+    $notes = $jobDescription = $companyWebsite = $response = $thankYouEmail = $rejection = $rejectionEmail = "";
+    //items
+    $itemName = $user = $done = $created = "";
+ ?>
+
+    <!-- ToDo today list -->
     <div class="list">
       <h1 class='header'>To do.</h1>
-
       <?php if(!empty($items)): ?>
       <ul class="items">
         <?php foreach($items as $item): ?>
           <li>
             <span class="item <?php echo $item['done'] ? ' done' : '' ?>"><?php echo $item['name']; ?></span>
-            <?php if($item['done']): ?>
+            <?php if(!$item['done']): ?>
               <a href="#" class="done-button">Mark as done</a>
-          <?php endif; ?>
+            <?php endif; ?>
           </li>
       <?php endforeach; ?>
     </ul>
@@ -53,20 +60,61 @@ $items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
       <p>You haven't added any items yet.</p>
     <?php endif; ?>
 
-        <form class="item-add" action="mysqlqueries.php" method="post">
+        <form class="item-add" action="add.php" method="post">
+          <input type="text" name="name" placeholder="Add a to-do here" class="input" autocomplete="off" required>
+          <input type="submit" value="Add" class="submit">
+        </form>
+    </div>
+
+    <!-- ToDo upcoming tmr list -->
+    <div class="list1">
+      <h1 class='header'>Upcoming Tomorrow</h1>
+      <?php if(!empty($items)): ?>
+      <ul class="items">
+        <?php foreach($items as $item): ?>
+          <li>
+            <span class="item <?php echo $item['done'] ? ' done' : '' ?>"><?php echo $item['name']; ?></span>
+            <?php if(!$item['done']): ?>
+              <a href="#" class="done-button">Mark as done</a>
+            <?php endif; ?>
+          </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php else: ?>
+      <p>You haven't added any items yet.</p>
+    <?php endif; ?>
+
+        <form class="item-add" action="add.php" method="post">
           <input type="text" name="itemName" placeholder="Add a to-do here" class="input" autocomplete="off" required>
           <input type="submit" value="Add" class="submit">
         </form>
-
     </div>
 
-    <?php
+    <!-- ToDo day after tomorrow list -->
+    <div class="list2">
+      <h1 class='header'>Upcoming, Day After Tomorrow</h1>
+      <?php if(!empty($items)): ?>
+      <ul class="items">
+        <?php foreach($items as $item): ?>
+          <li>
+            <span class="item <?php echo $item['done'] ? ' done' : '' ?>"><?php echo $item['name']; ?></span>
+            <?php if(!$item['done']): ?>
+              <a href="#" class="done-button">Mark as done</a>
+            <?php endif; ?>
+          </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php else: ?>
+      <p>You haven't added any items yet.</p>
+    <?php endif; ?>
 
-  // define variables and set to empty values
-  $companyNameErr = $contactNameErr = $contactEmailErr = "";
-  $companyName = $contactName = $contactEmail = $contactNumber = $associatesName = $associatesEmail = $associatesNumber = $notes = $jobDescription = $companyWebsite = $knownAssociates = $response = $thankYouEmail = $rejection = $rejectionEmail = $associatesLinkedIn = $contactLinkedIn = "";
-  //items
-  $itemName = "";
+        <form class="item-add" action="add.php" method="post">
+          <input type="text" name="itemName" placeholder="Add a to-do here" class="input" autocomplete="off" required>
+          <input type="submit" value="Add" class="submit">
+        </form>
+    </div>
+
+  <?php
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //company name && err handler
@@ -167,77 +215,96 @@ $items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
     return $data;
   }
   ?>
+<!-- This is where the form submition dynamically shows a list of contact cards displayed by company name -->
+<div class="inputForContacts">
+  <input placeholder="Search">
+  <h2 class="contacts">Contacts</h2>
+  <ul class="contactList">
+    <li>Target</li>
+    <li>Target</li>
+    <li>Target</li>
+    <li>Target</li>
+    <li>Target</li>
+    <li>Target</li>
+  </ul>
+</div>
 
+<div class="joblanderContactCard">
   <h2>Joblander Contact Card</h2>
 
-  <?php echo "Card created on " . date("D m, Y") . "<br>";?><br>
+  <p class="date"><?php echo "Card created on " . date("D m, Y") . "<br>";?></p><br>
+
   <p><span class="error">* required field.</span></p>
 
       <form method="post" action="mysqlqueries.php">
-
-        Company Name: <input type="text" name="companyName" value="<?php echo $companyName;?>">
-        <span class="error">* <?php echo $companyNameErr;?></span>
-        <br><br>
-
-        Contact's info:
-        <br>
-        <input type="text" name="contactName" placeholder="Name">
-        <span class="error">* <?php echo $contactNameErr;?></span>
-        <button id=button type="button">Add Contact</button>
-        <br><br>
-        <input type="text" name="email" placeholder="Email" value="<?php echo $contactEmail;?>">
-        <span class="error">* <?php echo $contactEmailErr;?></span>
-        <br><br>
-        <input type="text" name="pNumber" placeholder="(___)___-____" value="<?php echo $contactNumber;?>">
-        <br><br>
-        <input type="text" name="LinkedIn" placeholder="LinkedIn URL" value="<?php echo $contactLinkedIn;?>">
-        <br><br>
-
+        <!-- The Companys information section -->
+        <div class="companyInfo">
+          Company:
+          <br><br>
+          <span class="error">* <?php echo $companyNameErr;?></span>
+          <input type="text" name="companyName" placeholder="Name" value="<?php echo $companyName;?>">
+          <input type="text" name="jobTitle" placeholder="Job Title" value="<?php echo $jobTitle;?>">
+          <input type="text" name="jobPosting" placeholder="Job Posting" value="<?php echo $jobPosting;?>">
+          <input type="text" name="companyWebsite" placeholder="Website" value="<?php echo $companyWebsite;?>">
+          <br><br>
+        </div>
+        <!-- The Contacts information section -->
+        <div class="contactsInfo">
+          Contact's info: <button id=button type="button">Add Contact</button>
+          <br><br>
+          <span class="error">* <?php echo $contactNameErr;?></span>
+          <input type="text" name="contactName" placeholder="Name">
+          <span class="error">* <?php echo $contactEmailErr;?></span>
+          <input type="text" name="email" placeholder="Email" value="<?php echo $contactEmail;?>">
+          <input type="text" name="pNumber" placeholder="(___)___-____" value="<?php echo $contactNumber;?>">
+          <input type="text" name="LinkedIn" placeholder="LinkedIn URL" value="<?php echo $contactLinkedIn;?>">
+          <br><br>
+        </div>
+        <!-- The Associates information section -->
+        <div class="associatesInfo">
+          Known Associates Info: <button id=button type="button">Add Associate</button>
+          <br><br>
+          <input type="text" name="knownAssociates" placeholder="Name" value="<?php echo $knownAssociates;?>">
+          <input type="text" name="associatesemail" placeholder="Email" value="<?php echo $associatesEmail;?>">
+          <input type="text" name="associatespNumber" placeholder="(___)___-____" value="<?php echo $associatesNumber;?>">
+          <input type="text" name="associatesLinkedIn" placeholder="LinkedIn URL" value="<?php echo $associatesLinkedIn;?>">
+          <br><br>
+        </div>
 
         Notes:
-        <br><br>
+        <br>
         <textarea name="notes" type="text" rows="5" cols="40"></textarea>
         <br><br>
         Job Description:
         <br><br>
         <textarea name="jobDescription" type="text" rows="5" cols="40"></textarea>
         <br><br>
-        Website: <input type="text" name="companyWebsite" value="<?php echo $companyWebsite;?>">
-        <br><br>
-
-
-        Known Associates Info:
-        <br>
-        <input type="text" name="knownAssociates" placeholder="Name" value="<?php echo $knownAssociates;?>">
-        <br><br>
-        <input type="text" name="associatesemail" placeholder="Email" value="<?php echo $associatesEmail;?>">
-        <br><br>
-        <input type="text" name="associatespNumber" placeholder="(___)___-____" value="<?php echo $associatesNumber;?>">
-        <br><br>
-        <input type="text" name="associatesLinkedIn" placeholder="LinkedIn URL" value="<?php echo $associatesLinkedIn;?>">
-        <br><br>
 
         Response:
+        <br>
         <input type="radio" name="response" <?php if (isset($response) && $response=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="response" <?php if (isset($response) && $response=="No") echo "checked";?> value="No">No
         <br><br>
 
         Thank you Email:
+        <br>
         <input type="radio" name="thankYouEmail" <?php if (isset($thankYouEmail) && $thankYouEmail=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="thankYouEmail" <?php if (isset($thankYouEmail) && $thankYouEmail=="No") echo "checked";?> value="No">No
         <br><br>
 
         Rejection:
+        <br>
         <input type="radio" name="Rejection" <?php if (isset($rejection) && $rejection=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="Rejection" <?php if (isset($rejection) && $rejection=="No") echo "checked";?> value="No">No
         <br><br>
 
         Rejection Email:
+        <br>
         <input type="radio" name="rejectionEmail" <?php if (isset($rejectionEmail) && $rejectionEmail=="Yes") echo "checked";?> value="Yes">Yes
         <input type="radio" name="rejectionEmail" <?php if (isset($rejectionEmail) && $rejectionEmail=="No") echo "checked";?> value="No">No
         <br><br>
         <input type="submit" name="submit" value="Submit">
       </form>
-
+</div>
 </body>
 </html>
