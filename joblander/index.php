@@ -113,7 +113,6 @@ $items = $itemsQuery->rowCount() ? $itemsQuery->fetchAll() : [];
           <input type="submit" value="Add" class="submit">
         </form>
     </div>
-
   <?php
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
